@@ -7,18 +7,16 @@
 
 package frc.robot;
 
-import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
-
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.TimedRobot;
 
 public class Robot extends TimedRobot {
 
-  Joystick stick = new Joystick(0);
-  WPI_TalonSRX talon = new WPI_TalonSRX(4);
+  public static Joystick stick = new Joystick(0);
 
   @Override
   public void robotInit() {
+    Drive.init();
     CW_Spinner.init();
   }
 
@@ -47,7 +45,6 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopPeriodic() {
-    talon.set(stick.getY());
     CW_Spinner.telemetryUpdate();
   }
 

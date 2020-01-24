@@ -3,6 +3,9 @@ package frc.robot;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 
+/**
+ * Control wheel spinner class, using talon with encoder and rev color sensor
+ */
 public class CW_Spinner {
 
     public static WPI_TalonSRX talon = new WPI_TalonSRX(4);
