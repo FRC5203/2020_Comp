@@ -14,24 +14,26 @@ public class Robot extends TimedRobot {
 
   public static Joystick stick = new Joystick(0);
 
-  @Override
+  //Do module initiation and generic robot starting stuff here
   public void robotInit() {
-    Drive.init();
+		Drive.init();
+		Climber.init();
     CW_Spinner.init();
   }
 
-  @Override
+  
   public void robotPeriodic() {
+
   }
 
-  @Override
+  
   public void autonomousInit() {
     CW_Spinner.talon.setSelectedSensorPosition(0);
     hitTarget = false;
   }
 
   boolean hitTarget = false;
-  @Override
+  
   public void autonomousPeriodic() {
     if(hitTarget || CW_Spinner.getRotations() >= 1 || CW_Spinner.getRotations() <= -1){
       hitTarget = true;
@@ -45,7 +47,9 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopPeriodic() {
-    CW_Spinner.telemetryUpdate();
+		Drive.update();
+		Climber.update();
+		CW_Spinner.update();
   }
 
   @Override
