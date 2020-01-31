@@ -14,45 +14,50 @@ public class Robot extends TimedRobot {
 
   public static Joystick stick = new Joystick(0);
 
-  //Do module initiation and generic robot starting stuff here
+  /**
+   * Do module initialization and generic robot starting stuff here
+   * Comment out both the "new Module()" and the "Module.inst.init()" for all undesired modules
+  */
   public void robotInit() {
-		Drive.init();
-		Climber.init();
-    CW_Spinner.init();
+    new Drive();
+    Drive.inst.init();
+    //new Climber();
+    //Climber.inst.init();
+    //new CW_Spinner();
+    //CW_Spinner.inst.init();
   }
 
   
   public void robotPeriodic() {
-
+		
   }
 
   
   public void autonomousInit() {
-    CW_Spinner.talon.setSelectedSensorPosition(0);
-    hitTarget = false;
-  }
-
-  boolean hitTarget = false;
   
+  }
+
   public void autonomousPeriodic() {
-    if(hitTarget || CW_Spinner.getRotations() >= 1 || CW_Spinner.getRotations() <= -1){
-      hitTarget = true;
-      CW_Spinner.talon.set(0);
-      CW_Spinner.talon.setSelectedSensorPosition(0);
-      return;
-    }
-    CW_Spinner.talon.set(0.1);
-    CW_Spinner.telemetryUpdate();
+  
   }
 
-  @Override
+  /**
+   * Call the update functions of all modules on the robot (each module is checked for existence before use,
+   * so there is no reason to remove anything from here)
+   */
   public void teleopPeriodic() {
-		Drive.update();
-		Climber.update();
-		CW_Spinner.update();
+    if(Drive.inst != null){
+      Drive.inst.update();
+    }
+    if(Climber.inst != null){
+      Climber.inst.update();
+    }
+		if(CW_Spinner.inst != null){
+      CW_Spinner.inst.update();
+    }
   }
 
-  @Override
   public void testPeriodic() {
+
   }
 }
