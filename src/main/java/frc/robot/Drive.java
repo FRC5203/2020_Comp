@@ -22,7 +22,7 @@ public class Drive {
 	DifferentialDrive diffDrive = new DifferentialDrive(leftDrive, rightDrive);
 	
 	public static final int COUNTS_PER_REV = 2048;
-	Encoder leftEncoder = new Encoder(1,2);
+  Encoder leftEncoder = new Encoder(1,2);
   //static Encoder rightEncoder = new Encoder(5,6);
 
   /**

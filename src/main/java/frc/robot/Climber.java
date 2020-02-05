@@ -3,7 +3,7 @@ package frc.robot;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 
 /**
- * A class for the climbing arm and winch, with a talon for each
+ * A class for the climbing arm and winch, with a
  */
 public class Climber {
 
@@ -25,7 +25,7 @@ public class Climber {
 	/**
 	 * For any setup related to the climber
 	 */
-  public void init(){
+	public void init(){
 		
 	}
 	

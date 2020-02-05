@@ -19,12 +19,15 @@ public class Robot extends TimedRobot {
    * Comment out both the "new Module()" and the "Module.inst.init()" for all undesired modules
   */
   public void robotInit() {
-    new Drive();
-    Drive.inst.init();
+
+    //new Drive();
+    //Drive.inst.init();
     //new Climber();
     //Climber.inst.init();
     //new CW_Spinner();
     //CW_Spinner.inst.init();
+    new BallShooter();
+    BallShooter.inst.init();
   }
 
   
@@ -46,6 +49,7 @@ public class Robot extends TimedRobot {
    * so there is no reason to remove anything from here)
    */
   public void teleopPeriodic() {
+
     if(Drive.inst != null){
       Drive.inst.update();
     }
@@ -55,6 +59,10 @@ public class Robot extends TimedRobot {
 		if(CW_Spinner.inst != null){
       CW_Spinner.inst.update();
     }
+    if(BallShooter.inst != null){
+      BallShooter.inst.update();
+    }
+
   }
 
   public void testPeriodic() {
