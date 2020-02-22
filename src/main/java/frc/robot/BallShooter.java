@@ -21,7 +21,10 @@ public class BallShooter {
         inst = this;
     }
 
-    public void init(){
+    public void robotInit(){
+        
+        SmartDashboard.putNumber("Shooter RPM", 3000);
+        
         RBallShooter.configFactoryDefault();
         LBallShooter.configFactoryDefault();
 
@@ -41,20 +44,23 @@ public class BallShooter {
         LBallShooter.configPeakOutputForward(1, Constants.kTimeoutMs);
         LBallShooter.configPeakOutputReverse(-1, Constants.kTimeoutMs);
         
-        RBallShooter.config_kF(Constants.kPIDLoopIdx, Constants.kGains_Velocit.kF, Constants.kTimeoutMs);
-        RBallShooter.config_kP(Constants.kPIDLoopIdx, Constants.kGains_Velocit.kP, Constants.kTimeoutMs);
-        RBallShooter.config_kI(Constants.kPIDLoopIdx, Constants.kGains_Velocit.kI, Constants.kTimeoutMs);
-        RBallShooter.config_kD(Constants.kPIDLoopIdx, Constants.kGains_Velocit.kD, Constants.kTimeoutMs);
+        RBallShooter.config_kF(Constants.kPIDLoopIdx, Constants.kF, Constants.kTimeoutMs);
+        RBallShooter.config_kP(Constants.kPIDLoopIdx, Constants.kP, Constants.kTimeoutMs);
+        RBallShooter.config_kI(Constants.kPIDLoopIdx, Constants.kI, Constants.kTimeoutMs);
+        RBallShooter.config_kD(Constants.kPIDLoopIdx, Constants.kD, Constants.kTimeoutMs);
 
-        LBallShooter.config_kF(Constants.kPIDLoopIdx, Constants.kGains_Velocit.kF, Constants.kTimeoutMs);
-        LBallShooter.config_kP(Constants.kPIDLoopIdx, Constants.kGains_Velocit.kP, Constants.kTimeoutMs);
-        LBallShooter.config_kI(Constants.kPIDLoopIdx, Constants.kGains_Velocit.kI, Constants.kTimeoutMs);
-        LBallShooter.config_kD(Constants.kPIDLoopIdx, Constants.kGains_Velocit.kD, Constants.kTimeoutMs);
+        LBallShooter.config_kF(Constants.kPIDLoopIdx, Constants.kF, Constants.kTimeoutMs);
+        LBallShooter.config_kP(Constants.kPIDLoopIdx, Constants.kP, Constants.kTimeoutMs);
+        LBallShooter.config_kI(Constants.kPIDLoopIdx, Constants.kI, Constants.kTimeoutMs);
+        LBallShooter.config_kD(Constants.kPIDLoopIdx, Constants.kD, Constants.kTimeoutMs);
     
     }
 
-    public void update(){
+    public void teleopInit(){
 
+    }
+
+    public void update(){
         double motorOutputR = RBallShooter.getMotorOutputPercent();
         double motorOutputL = LBallShooter.getMotorOutputPercent();
 
@@ -68,9 +74,9 @@ public class BallShooter {
         sb.append("u L ");
         sb.append(LBallShooter.getSelectedSensorVelocity(Constants.kPIDLoopIdx));
         sb.append("u");
-
+ 
         if (Robot.stick.getRawButton(1)) {
-            double targetVelocity_UnitsPer100ms = 500.0 * 4096 / 600;
+            double targetVelocity_UnitsPer100ms = SmartDashboard.getNumber("Shooter RPM", 0) * 4096 / 600;
 
             RBallShooter.set(ControlMode.Velocity, targetVelocity_UnitsPer100ms);
             LBallShooter.set(ControlMode.Velocity, targetVelocity_UnitsPer100ms);
@@ -95,6 +101,48 @@ public class BallShooter {
         }
 
         sb.setLength(0);
+    }
 
+    public void runShooter(){
+        double motorOutputR = RBallShooter.getMotorOutputPercent();
+        double motorOutputL = LBallShooter.getMotorOutputPercent();
+
+        sb.append("\tout: R ");
+        sb.append((int) (motorOutputR * 100));
+        sb.append(" L ");
+        sb.append((int) (motorOutputL * 100));
+
+        sb.append("\tspd: R ");
+        sb.append(RBallShooter.getSelectedSensorVelocity(Constants.kPIDLoopIdx));
+        sb.append("u L ");
+        sb.append(LBallShooter.getSelectedSensorVelocity(Constants.kPIDLoopIdx));
+        sb.append("u");
+ 
+        if (Robot.stick.getRawButton(1)) {
+            double targetVelocity_UnitsPer100ms = SmartDashboard.getNumber("Shooter RPM", 0) * 4096 / 600;
+
+            RBallShooter.set(ControlMode.Velocity, targetVelocity_UnitsPer100ms);
+            LBallShooter.set(ControlMode.Velocity, targetVelocity_UnitsPer100ms);
+
+            sb.append("\terr: R ");
+            sb.append(RBallShooter.getClosedLoopError(Constants.kPIDLoopIdx));
+            sb.append(" L ");
+            sb.append(LBallShooter.getClosedLoopError(Constants.kPIDLoopIdx));
+            sb.append("\ttrg");
+            sb.append(targetVelocity_UnitsPer100ms);
+        } 
+        else {
+            RBallShooter.set(ControlMode.PercentOutput, 0);
+            LBallShooter.set(ControlMode.PercentOutput, 0);
+            //RBallShooter.set(ControlMode.PercentOutput, leftYstick);
+            //LBallShooter.set(ControlMode.PercentOutput, leftYstick);
+        }
+
+        if (++loops >= 10){
+            loops = 0;
+            SmartDashboard.putString("Shooter PID Out: ", sb.toString());
+        }
+
+        sb.setLength(0);
     }
 }

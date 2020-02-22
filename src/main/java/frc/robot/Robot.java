@@ -13,35 +13,58 @@ import edu.wpi.first.wpilibj.TimedRobot;
 public class Robot extends TimedRobot {
 
   public static Joystick stick = new Joystick(0);
+  AutonomousShoot auto = new AutonomousShoot();
+
+  public boolean initiated = false;
 
   /**
-   * Do module initialization and generic robot starting stuff here
-   * Comment out both the "new Module()" and the "Module.inst.init()" for all undesired modules
+   * Do module initialization and generic robot starting stuff here.
+   * Comment out both the "new Component()" and the "Component.inst.robotInit()" for all undesired modules
   */
   public void robotInit() {
-
-    //new Drive();
-    //Drive.inst.init();
+    new Drive();
+    Drive.inst.robotInit();
     //new Climber();
-    //Climber.inst.init();
+    //Climber.inst.robotInit();
     //new CW_Spinner();
-    //CW_Spinner.inst.init();
-    new BallShooter();
-    BallShooter.inst.init();
+    //CW_Spinner.inst.robotInit();
+    //new BallShooter();
+    //BallShooter.inst.robotInit();
   }
 
-  
   public void robotPeriodic() {
-		
+    
   }
-
   
   public void autonomousInit() {
-  
+    auto.init();
   }
 
   public void autonomousPeriodic() {
-  
+    if(!auto.complete){
+      auto.update();
+    }
+    else{
+      Drive.inst.leftDrive.set(0);
+      Drive.inst.rightDrive.set(0);
+    }
+    Drive.inst.sendTelemetry();
+  }
+
+  public void teleopInit(){
+    if(Drive.inst != null){
+      Drive.inst.teleopInit();
+      Drive.inst.sendTelemetry();
+    }
+    if(Climber.inst != null){
+      Climber.inst.teleopInit();
+    }
+		if(CW_Spinner.inst != null){
+      CW_Spinner.inst.teleopInit();
+    }
+    if(BallShooter.inst != null){
+      BallShooter.inst.teleopInit();
+    }
   }
 
   /**
@@ -49,7 +72,6 @@ public class Robot extends TimedRobot {
    * so there is no reason to remove anything from here)
    */
   public void teleopPeriodic() {
-
     if(Drive.inst != null){
       Drive.inst.update();
     }
@@ -62,10 +84,20 @@ public class Robot extends TimedRobot {
     if(BallShooter.inst != null){
       BallShooter.inst.update();
     }
-
   }
 
   public void testPeriodic() {
 
+  }
+
+  public void disabledPeriodic(){
+    if(Drive.inst != null){
+      Drive.inst.sendTelemetry();
+    }
+  }
+
+  public void disabledInit(){
+    auto.complete = false;
+    auto.index = 0;
   }
 }

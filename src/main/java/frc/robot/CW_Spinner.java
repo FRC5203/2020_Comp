@@ -30,22 +30,16 @@ public class CW_Spinner {
   */
   public static final int COUNTS_PER_REV = 4096;
   
-  /**
-   * Singleton variable: the instance of the class, stored statically for easy access 
-   */
+  ///Singleton variable: the instance of the class, stored statically for easy access 
   public static CW_Spinner inst;
 
-  /**
-   * Call only once to initialize the singleton (inst) variable
-   */
+  ///Call only once to initialize the singleton (inst) variable
   public CW_Spinner(){
     inst = this;
   }
     
-  /**
-   * For any setup related to the control wheel spinner
-   */
-  public void init(){
+  ///For any setup related to the control wheel spinner
+  public void robotInit(){
     talon.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative,0,10);
     talon.setSelectedSensorPosition(0);
 
@@ -57,12 +51,13 @@ public class CW_Spinner {
     color_match.addColorMatch(color_green);
     //Blue
     color_match.addColorMatch(color_blue);
-
   }
   
-  /**
-   * Called in robotPeriodic, contains all input handling from controller and telemetry
-   */
+  public void teleopInit(){
+    
+  }
+
+  ///Called in robotPeriodic, contains all input handling from controller and telemetry
   public void update(){
 		System.out.println("Rots: " + getRotations());
     System.out.println("Counts: " + talon.getSelectedSensorPosition());
@@ -90,16 +85,12 @@ public class CW_Spinner {
     }
   }
 
-  /**
-   * Returns the configured color in the color matcher that is closest to that of the color sensor
-   */
+  ///Returns the configured color in the color matcher that is closest to that of the color sensor
   public Color getColor(){
     return color_match.matchClosestColor(color_sensor.getColor()).color;
   }
 
-  /**
-   * Returns number of times the control wheel spinner rotated (not distance travelled)
-   */
+  ///Returns number of times the control wheel spinner rotated (not distance travelled)
   public float getRotations(){
     return (float)talon.getSelectedSensorPosition() / (float)COUNTS_PER_REV;
   }
