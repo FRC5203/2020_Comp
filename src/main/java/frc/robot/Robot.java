@@ -15,8 +15,6 @@ public class Robot extends TimedRobot {
   public static Joystick stick = new Joystick(0);
   AutonomousShoot auto = new AutonomousShoot();
 
-  public boolean initiated = false;
-
   /**
    * Do module initialization and generic robot starting stuff here.
    * Comment out both the "new Component()" and the "Component.inst.robotInit()" for all undesired modules

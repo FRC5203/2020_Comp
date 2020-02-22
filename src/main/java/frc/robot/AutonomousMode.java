@@ -7,15 +7,16 @@ public class AutonomousMode {
     public boolean complete = false;
     public int index = 0;
     public double startAngle;
-    
+
     public void init(){
         Drive.inst.gyro.reset();
         Drive.inst.encoderLeft.reset();
         Drive.inst.encoderRight.reset();
+
         Drive.inst.rightDrive.setInverted(true);
         Drive.inst.encoderLeft.setReverseDirection(true);
     }
-
+    //function to move to the next target
     public void next(){
         if(index == targets.length - 1){
             complete = true;
@@ -33,14 +34,12 @@ public class AutonomousMode {
             
         }
     }
-
+    //continually runs to complete each auto target, does the driving and turning logic
     public void update(AutoTarget target){
         if(target != null){
-            int leftError = Drive.inst.encoderLeft.get() - target.countsLeft;
-            int rightError = 0;
             //If there is an angle, do turning
             if(target.angle != 0){
-                if(Math.abs(Drive.inst.getGyroRotation()) - Math.abs(startAngle) >= Math.abs(target.angle)){
+                if(Math.abs(Drive.inst.getGyroRotation() - startAngle) >= Math.abs(target.angle)){
                     next();
                 }
                 else{
@@ -49,7 +48,9 @@ public class AutonomousMode {
             }
             //Else do driving
             else{
-                if(target.countsRight < 0){
+                int leftError = Drive.inst.encoderLeft.get() - target.countsLeft;
+                int rightError = 0;
+                if(target.countsRight <= 0){
                     rightError = -(Drive.inst.encoderRight.get() - target.countsRight);
                 }
                 else{
