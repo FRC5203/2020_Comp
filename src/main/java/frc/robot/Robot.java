@@ -13,6 +13,8 @@ import edu.wpi.first.wpilibj.TimedRobot;
 public class Robot extends TimedRobot {
 
   public static Joystick stick = new Joystick(0);
+
+  //Auto variable type can change depending on desired autonomous mode (should change this to work with smartdashboard)
   AutonomousShoot auto = new AutonomousShoot();
 
   /**
@@ -38,6 +40,7 @@ public class Robot extends TimedRobot {
     auto.init();
   }
 
+  //Update the auto mode and send sensor data to smartdashboard
   public void autonomousPeriodic() {
     if(!auto.complete){
       auto.update();
@@ -49,6 +52,7 @@ public class Robot extends TimedRobot {
     Drive.inst.sendTelemetry();
   }
 
+  //Initiate each component for teleop if available
   public void teleopInit(){
     if(Drive.inst != null){
       Drive.inst.teleopInit();
@@ -88,12 +92,14 @@ public class Robot extends TimedRobot {
 
   }
 
+  //Send sensor data if drive is available
   public void disabledPeriodic(){
     if(Drive.inst != null){
       Drive.inst.sendTelemetry();
     }
   }
 
+  //Reset auto mode (disabling robot will not )
   public void disabledInit(){
     auto.complete = false;
     auto.index = 0;

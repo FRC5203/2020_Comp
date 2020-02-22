@@ -13,8 +13,6 @@ public class BallShooter {
     TalonSRX RBallShooter = new TalonSRX(1);
     TalonSRX LBallShooter = new TalonSRX(4);
 
-    StringBuilder sb = new StringBuilder();
-
     int loops = 0;
 
     public BallShooter(){
@@ -25,15 +23,19 @@ public class BallShooter {
         
         SmartDashboard.putNumber("Shooter RPM", 3000);
         
+        //Resets the talons to avoid any issues with prior configurations
         RBallShooter.configFactoryDefault();
         LBallShooter.configFactoryDefault();
 
+        //Configure the feedback sensor for each talon to be a mag encoder
         RBallShooter.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, Constants.kPIDLoopIdx, Constants.kTimeoutMs);
         LBallShooter.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, Constants.kPIDLoopIdx, Constants.kTimeoutMs);
 
+        //Set each encoder to not be inverted
         RBallShooter.setSensorPhase(false);
         LBallShooter.setSensorPhase(false);
 
+        //Configure the min (nominal) and max (peak) percent outputs
         RBallShooter.configNominalOutputForward(0, Constants.kTimeoutMs);
         RBallShooter.configNominalOutputReverse(0, Constants.kTimeoutMs);
         RBallShooter.configPeakOutputForward(1, Constants.kTimeoutMs);
@@ -44,6 +46,7 @@ public class BallShooter {
         LBallShooter.configPeakOutputForward(1, Constants.kTimeoutMs);
         LBallShooter.configPeakOutputReverse(-1, Constants.kTimeoutMs);
         
+        //PID Controller variables
         RBallShooter.config_kF(Constants.kPIDLoopIdx, Constants.kF, Constants.kTimeoutMs);
         RBallShooter.config_kP(Constants.kPIDLoopIdx, Constants.kP, Constants.kTimeoutMs);
         RBallShooter.config_kI(Constants.kPIDLoopIdx, Constants.kI, Constants.kTimeoutMs);
@@ -61,32 +64,14 @@ public class BallShooter {
     }
 
     public void update(){
-        double motorOutputR = RBallShooter.getMotorOutputPercent();
-        double motorOutputL = LBallShooter.getMotorOutputPercent();
-
-        sb.append("\tout: R ");
-        sb.append((int) (motorOutputR * 100));
-        sb.append(" L ");
-        sb.append((int) (motorOutputL * 100));
-
-        sb.append("\tspd: R ");
-        sb.append(RBallShooter.getSelectedSensorVelocity(Constants.kPIDLoopIdx));
-        sb.append("u L ");
-        sb.append(LBallShooter.getSelectedSensorVelocity(Constants.kPIDLoopIdx));
-        sb.append("u");
- 
+        //If the A button is pressed, run the motors with a target velocity (using PID) else cut power
         if (Robot.stick.getRawButton(1)) {
             double targetVelocity_UnitsPer100ms = SmartDashboard.getNumber("Shooter RPM", 0) * 4096 / 600;
 
             RBallShooter.set(ControlMode.Velocity, targetVelocity_UnitsPer100ms);
             LBallShooter.set(ControlMode.Velocity, targetVelocity_UnitsPer100ms);
 
-            sb.append("\terr: R ");
-            sb.append(RBallShooter.getClosedLoopError(Constants.kPIDLoopIdx));
-            sb.append(" L ");
-            sb.append(LBallShooter.getClosedLoopError(Constants.kPIDLoopIdx));
-            sb.append("\ttrg");
-            sb.append(targetVelocity_UnitsPer100ms);
+            SmartDashboard.putNumber("Shooter Target Vel", targetVelocity_UnitsPer100ms);
         } 
         else {
             RBallShooter.set(ControlMode.PercentOutput, 0);
@@ -94,42 +79,17 @@ public class BallShooter {
             //RBallShooter.set(ControlMode.PercentOutput, leftYstick);
             //LBallShooter.set(ControlMode.PercentOutput, leftYstick);
         }
-
-        if (++loops >= 10){
-            loops = 0;
-            SmartDashboard.putString("Shooter PID Out: ", sb.toString());
-        }
-
-        sb.setLength(0);
     }
 
+    //Currently serves same purpose as update function but will be adapted to autonomous
     public void runShooter(){
-        double motorOutputR = RBallShooter.getMotorOutputPercent();
-        double motorOutputL = LBallShooter.getMotorOutputPercent();
-
-        sb.append("\tout: R ");
-        sb.append((int) (motorOutputR * 100));
-        sb.append(" L ");
-        sb.append((int) (motorOutputL * 100));
-
-        sb.append("\tspd: R ");
-        sb.append(RBallShooter.getSelectedSensorVelocity(Constants.kPIDLoopIdx));
-        sb.append("u L ");
-        sb.append(LBallShooter.getSelectedSensorVelocity(Constants.kPIDLoopIdx));
-        sb.append("u");
- 
         if (Robot.stick.getRawButton(1)) {
             double targetVelocity_UnitsPer100ms = SmartDashboard.getNumber("Shooter RPM", 0) * 4096 / 600;
 
             RBallShooter.set(ControlMode.Velocity, targetVelocity_UnitsPer100ms);
             LBallShooter.set(ControlMode.Velocity, targetVelocity_UnitsPer100ms);
 
-            sb.append("\terr: R ");
-            sb.append(RBallShooter.getClosedLoopError(Constants.kPIDLoopIdx));
-            sb.append(" L ");
-            sb.append(LBallShooter.getClosedLoopError(Constants.kPIDLoopIdx));
-            sb.append("\ttrg");
-            sb.append(targetVelocity_UnitsPer100ms);
+            SmartDashboard.putNumber("Shooter Target Vel", targetVelocity_UnitsPer100ms);
         } 
         else {
             RBallShooter.set(ControlMode.PercentOutput, 0);
@@ -137,12 +97,5 @@ public class BallShooter {
             //RBallShooter.set(ControlMode.PercentOutput, leftYstick);
             //LBallShooter.set(ControlMode.PercentOutput, leftYstick);
         }
-
-        if (++loops >= 10){
-            loops = 0;
-            SmartDashboard.putString("Shooter PID Out: ", sb.toString());
-        }
-
-        sb.setLength(0);
     }
 }

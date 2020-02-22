@@ -10,10 +10,10 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
  */
 public class Climber {
 
-	public WPI_TalonSRX talonArm = new WPI_TalonSRX(1);
+	public WPI_TalonSRX talonArm = new WPI_TalonSRX(3);
 
-	public WPI_TalonSRX talonWinch = new WPI_TalonSRX(2);
-	public WPI_TalonSRX talonWinch2 = new WPI_TalonSRX(3);
+	public WPI_TalonSRX talonWinch = new WPI_TalonSRX(1);
+	public WPI_TalonSRX talonWinch2 = new WPI_TalonSRX(2);
 	///Combines both winch talons into a group for controlling them simultaneously
 	public SpeedControllerGroup winchGroup = new SpeedControllerGroup(talonWinch, talonWinch2);
 
@@ -37,7 +37,7 @@ public class Climber {
 	
 	///Called in robotPeriodic, contains all input handling from controller and telemetry
 	public void update(){
-		//Arm up
+		//Arm up (spool out cable from winch while going up)
 		if(Robot.stick.getRawButton(4)){
 			talonArm.set(SmartDashboard.getNumber("Climber Arm Speed: ", 0.5));
 			winchGroup.set(-SmartDashboard.getNumber("Climber Winch Speed: ", 0.25));
@@ -46,12 +46,13 @@ public class Climber {
 		else if(Robot.stick.getRawButton(2)){
 			talonArm.set(-SmartDashboard.getNumber("Climber Arm Speed: ", 0.5));
 		}
+		//Stop moving
 		else{
 			talonArm.set(0);
+			winchGroup.set(0);
 		}
-
+		//Climb with winch
 		if(Robot.stick.getRawButton(1)){
-			//do winch climb
 			winchGroup.set(SmartDashboard.getNumber("Climber Winch Speed: ", 0.25));
 		}
 	}

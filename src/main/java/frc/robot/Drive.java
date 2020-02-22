@@ -24,6 +24,7 @@ public class Drive {
   public static final int COUNTS_PER_REV = 2048;
   //Width between the wheels in inches
   public static final int WHEEL_BASE = 22;
+
   Encoder encoderLeft = new Encoder(5,6);
   Encoder encoderRight = new Encoder(1,2);
 
@@ -69,6 +70,7 @@ public class Drive {
 		return (float)encoderLeft.get()/(float)COUNTS_PER_REV;
   }
 
+  //Prints useful drive train sensor data
   public void sendTelemetry(){
     SmartDashboard.putNumber("Left Encoder Counts: ", encoderLeft.get());
     SmartDashboard.putNumber("Right Encoder Counts", encoderRight.get());
@@ -76,6 +78,7 @@ public class Drive {
     SmartDashboard.putNumber("Gyro Rotation: ", getGyroRotation());
   }
 
+  //Gets the total change in rotation (in degrees) of the robot i.e. value will not reset when passing zero degree mark
   public double getGyroRotation(){
     return gyro.getAngle();
   }

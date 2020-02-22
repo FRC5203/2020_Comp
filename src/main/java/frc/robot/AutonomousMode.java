@@ -8,6 +8,7 @@ public class AutonomousMode {
     public int index = 0;
     public double startAngle;
 
+    //Resets all sensors, inverts right side of the drive train and inverts left side encoder
     public void init(){
         Drive.inst.gyro.reset();
         Drive.inst.encoderLeft.reset();
@@ -18,6 +19,7 @@ public class AutonomousMode {
     }
     //function to move to the next target
     public void next(){
+        //If already on final target index, auto is complete
         if(index == targets.length - 1){
             complete = true;
             Drive.inst.diffDrive.tankDrive(0,0);
@@ -25,16 +27,16 @@ public class AutonomousMode {
             Drive.inst.encoderRight.reset();
 
         }
+        //Else move to next target index and reset vars, set starting angle in case of turning
         else{
             index++;
             startAngle = Drive.inst.getGyroRotation();
             Drive.inst.diffDrive.tankDrive(0,0);
             Drive.inst.encoderLeft.reset();
             Drive.inst.encoderRight.reset();
-            
         }
     }
-    //continually runs to complete each auto target, does the driving and turning logic
+    //Continually runs to complete each auto target, does the driving and turning logic
     public void update(AutoTarget target){
         if(target != null){
             //If there is an angle, do turning
@@ -48,18 +50,21 @@ public class AutonomousMode {
             }
             //Else do driving
             else{
+                //Generate left and right error, (error should be negative until target has been reached)
                 int leftError = Drive.inst.encoderLeft.get() - target.countsLeft;
                 int rightError = 0;
+                //In cases where right side is moving in reverse, error should be inverted
                 if(target.countsRight <= 0){
                     rightError = -(Drive.inst.encoderRight.get() - target.countsRight);
                 }
                 else{
                     rightError = Drive.inst.encoderRight.get() - target.countsRight;
                 }
-                
+                //If error is non negative on each side, go to next target
                 if(leftError >= 0 && rightError >= 0){
                     next();
                 }
+                //If 80% of drive is done, lower speed to prevent overshooting target distance
                 else if((double)(Drive.inst.encoderLeft.get() / target.countsLeft) >= 0.8){
                     Drive.inst.diffDrive.tankDrive(0.25, 0.25);
                 }
@@ -71,6 +76,7 @@ public class AutonomousMode {
     }
 }
 
+//Holds are variable neccessary for a given robot maneuver (includes driving and turning)
 class AutoTarget {
 
     public AutoTarget(int countsLeft, int countsRight, double speedLeft, double speedRight){
