@@ -60,6 +60,9 @@ public class AutonomousMode {
                 if(leftError >= 0 && rightError >= 0){
                     next();
                 }
+                else if((double)(Drive.inst.encoderLeft.get() / target.countsLeft) >= 0.8){
+                    Drive.inst.diffDrive.tankDrive(0.25, 0.25);
+                }
                 else{
                     Drive.inst.diffDrive.tankDrive(target.speedLeft, target.speedRight);
                 }

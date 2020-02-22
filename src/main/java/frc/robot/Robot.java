@@ -20,10 +20,10 @@ public class Robot extends TimedRobot {
    * Comment out both the "new Component()" and the "Component.inst.robotInit()" for all undesired modules
   */
   public void robotInit() {
-    new Drive();
-    Drive.inst.robotInit();
-    //new Climber();
-    //Climber.inst.robotInit();
+    //new Drive();
+    //Drive.inst.robotInit();
+    new Climber();
+    Climber.inst.robotInit();
     //new CW_Spinner();
     //CW_Spinner.inst.robotInit();
     //new BallShooter();
